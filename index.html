@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#17121c">
+<title>مملكة الأبد</title>
+<style>
+:root{--bg:#100d14;--panel:#1d1722;--gold:#d8b46a;--muted:#b7aebd;--line:#49384b;--red:#8d4355}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#342137 0,#100d14 55%);color:#f8f1e6;font-family:system-ui,Tahoma,Arial;min-height:100vh}
+main{max-width:760px;margin:auto;padding:22px 15px 50px}.hero{text-align:center;padding:25px 10px 18px}.crown{font-size:42px}.hero h1{color:var(--gold);font-size:32px;margin:5px}.hero p{color:var(--muted);margin:4px}
+.card{background:rgba(29,23,34,.96);border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0;box-shadow:0 12px 35px #0005}
+h2{color:var(--gold);font-size:19px;margin:0 0 13px}label{display:block;color:var(--muted);font-size:14px;margin:10px 0 6px}
+input,textarea,select{width:100%;background:#120f16;border:1px solid #59465b;color:#fff;border-radius:11px;padding:12px;font:inherit;outline:none}
+textarea{min-height:80px;resize:vertical}button{border:0;border-radius:11px;padding:12px 16px;font:inherit;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#e7ca83,#b88742);color:#211725}
+button.secondary{background:#34283a;color:#f5e9d0;border:1px solid #624d65}button.danger{background:#5a2938;color:#fff}
+button:disabled{opacity:.5;cursor:not-allowed}.row{display:flex;gap:9px;flex-wrap:wrap}.row>*{flex:1}.muted{color:var(--muted);font-size:13px}.hidden{display:none!important}.status{padding:10px 12px;border-radius:10px;background:#2a2230;color:#e8d6a9;margin:10px 0}.good{color:#9ee0b1}.bad{color:#ffb0b0}.role{display:inline-block;padding:5px 10px;border:1px solid var(--gold);border-radius:20px;color:var(--gold);font-size:13px}
+#messages{height:250px;overflow:auto;background:#120f16;border-radius:12px;padding:10px;border:1px solid var(--line)}
+.msg{padding:8px 10px;margin:7px 0;background:#29212e;border-radius:10px;overflow-wrap:anywhere}.msg small{display:block;color:var(--gold);font-size:11px}.msg.mine{border-right:3px solid var(--gold)}
+.event{border-bottom:1px solid var(--line);padding:9px 0;color:#e8d9bd}.foot{text-align:center;color:#8f8493;font-size:12px;margin-top:25px}
+</style>
+</head>
+<body><main>
+<header class="hero"><div class="crown">♛</div><h1>مملكة الأبد</h1><p>مملكتكما تبدأ بقرارٍ واحد</p></header>
+<div id="authCard" class="card">
+<h2>الدخول إلى المملكة</h2>
+<label>البريد الإلكتروني</label><input id="email" type="email" autocomplete="email" placeholder="name@example.com">
+<label>كلمة المرور</label><input id="password" type="password" autocomplete="current-password" placeholder="6 أحرف على الأقل">
+<div class="row" style="margin-top:13px"><button id="loginBtn">تسجيل الدخول</button><button id="signupBtn" class="secondary">إنشاء حساب</button></div>
+<div id="authStatus" class="status">أنشئ حسابًا مستقلًا لكل لاعب. لا تستخدموا كلمة المرور نفسها أو تشاركوها.</div>
+</div>
+<div id="lobby" class="hidden">
+<div class="card"><h2>أهلًا بك في المملكة</h2><div id="userLine" class="muted"></div><button id="logoutBtn" class="secondary" style="margin-top:10px">تسجيل الخروج</button></div>
+<div class="card"><h2>إنشاء مملكة جديدة</h2>
+<label>اسمك داخل اللعبة</label><input id="createName" maxlength="24" placeholder="اسم الملك أو الملكة">
+<label>اختر دورك</label><select id="createRole"><option value="king">الملك</option><option value="queen">الملكة</option></select>
+<button id="createBtn" style="width:100%;margin-top:12px">إنشاء المملكة ورمز الدعوة</button>
+</div>
+<div class="card"><h2>الانضمام إلى مملكة</h2>
+<label>اسمك داخل اللعبة</label><input id="joinName" maxlength="24" placeholder="اسمك">
+<label>رمز الدعوة</label><input id="roomCode" maxlength="14" placeholder="مثال: K-AB12CD34EF">
+<button id="joinBtn" style="width:100%;margin-top:12px">انضمام</button>
+</div></div>
+<div id="game" class="hidden">
+<div class="card"><div class="row" style="align-items:center"><div><h2 style="margin-bottom:5px">مملكتكما</h2><div id="myRole" class="role"></div></div><div style="text-align:left"><button id="copyCode" class="secondary">نسخ رمز الدعوة</button></div></div><div id="roomInfo" class="muted" style="margin-top:10px"></div><div id="playersLine" class="status"></div></div>
+<div class="card"><h2>مجلس المملكة</h2><div id="storyText">لم يُكتب قرار بعد.</div><label>قرار أو فكرة مشتركة</label><textarea id="decision" maxlength="1000" placeholder="اكتبا القرار الذي تريدان اتخاذه..."></textarea><button id="saveDecision" style="margin-top:9px">اعتماد القرار</button><div id="events" style="margin-top:12px"></div></div>
+<div class="card"><h2>الشات الملكي</h2><div id="messages"></div><label>رسالتك</label><div class="row"><input id="messageInput" maxlength="500" placeholder="اكتب رسالة..."><button id="sendBtn">إرسال</button></div></div>
+<div class="card"><h2>ملاحظاتي الخاصة</h2><p class="muted">هذه الملاحظة محفوظة تحت حسابك ولا تظهر في الشات أو بيانات اللاعب الآخر.</p><textarea id="privateText" maxlength="1000" placeholder="اكتب شيئًا خاصًا بك..."></textarea><button id="savePrivate" class="secondary" style="margin-top:9px">حفظ ملاحظتي</button><span id="privateStatus" class="muted"></span></div>
+</div>
+<div id="globalStatus" class="status hidden"></div>
+<div class="foot">نسخة أولية تجريبية • لا تضعوا معلومات شخصية حساسة داخل اللعبة</div>
+</main>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {"apiKey":"AIzaSyAh32NGbiZVZbY-WE_Lf5ef6X8wLkw3xn0","authDomain":"mamlakat-alabad.firebaseapp.com","databaseURL":"https://mamlakat-alabad-default-rtdb.firebaseio.com","projectId":"mamlakat-alabad","storageBucket":"mamlakat-alabad.firebasestorage.app","messagingSenderId":"1041905354485","appId":"1:1041905354485:web:d525ce1a5734de3afbe7bc","measurementId":"G-79ND2KC8LX"};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(), db=firebase.database();
+const $=id=>document.getElementById(id);
+let currentRoom=null,myRole=null,roomRef=null,listeners=[];
+function status(id,msg,bad=false){$(id).textContent=msg;$(id).classList.toggle('bad',bad);$(id).classList.toggle('good',!bad)}
+function show(id,on){$(id).classList.toggle('hidden',!on)}
+function cleanListeners(){listeners.forEach(([r,e,cb])=>r.off(e,cb));listeners=[];if(roomRef){roomRef.off();roomRef=null}}
+function listen(ref,event,cb){ref.on(event,cb);listeners.push([ref,event,cb])}
+function code(){const chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";const a=new Uint8Array(10);crypto.getRandomValues(a);return Array.from(a,x=>chars[x%chars.length]).join("")}
+function validName(v){return v.trim().length>0&&v.trim().length<=24}
+$("signupBtn").onclick=async()=>{try{const c=await auth.createUserWithEmailAndPassword($("email").value.trim(),$("password").value);status("authStatus","تم إنشاء الحساب: "+c.user.email)}catch(e){status("authStatus",e.message,true)}};
+$("loginBtn").onclick=async()=>{try{await auth.signInWithEmailAndPassword($("email").value.trim(),$("password").value)}catch(e){status("authStatus",e.message,true)}};
+$("logoutBtn").onclick=()=>auth.signOut();
+auth.onAuthStateChanged(user=>{cleanListeners();currentRoom=null;myRole=null;show("authCard",!user);show("lobby",!!user);show("game",false);if(user)$("userLine").textContent="الحساب: "+user.email});
+$("createBtn").onclick=async()=>{
+ const user=auth.currentUser,name=$("createName").value.trim(),role=$("createRole").value;
+ if(!validName(name)){alert("اكتب اسمًا من 1 إلى 24 حرفًا.");return}
+ const roomCode=(role==="king"?"K-":"Q-")+code(),id=roomCode.replace("-","");
+ const room={createdAt:firebase.database.ServerValue.TIMESTAMP,ownerUid:user.uid,players:{[role]:{uid:user.uid,name,joinedAt:firebase.database.ServerValue.TIMESTAMP}},story:{text:"بدأت حكاية المملكة. ما أول قرار ستتخذانه؟",updatedAt:firebase.database.ServerValue.TIMESTAMP}};
+ try{await db.ref("rooms/"+id).set(room);await enterRoom(id,role,roomCode)}catch(e){alert("تعذر إنشاء المملكة: "+e.message)}
+};
+$("joinBtn").onclick=async()=>{
+ const user=auth.currentUser,name=$("joinName").value.trim(),raw=$("roomCode").value.trim().toUpperCase().replace(/\s/g,"");
+ if(!validName(name)){alert("اكتب اسمًا من 1 إلى 24 حرفًا.");return}
+ const m=raw.match(/^([KQ])-([A-HJ-NP-Z2-9]{10})$/);if(!m){alert("رمز الدعوة غير صحيح.");return}
+ const role=m[1]==="K"?"queen":"king",id=raw.replace("-","");
+ const seat=db.ref("rooms/"+id+"/players/"+role);
+ try{
+   await seat.set({uid:user.uid,name,joinedAt:firebase.database.ServerValue.TIMESTAMP});
+   await enterRoom(id,role,raw);
+ }catch(e){alert("تعذر الانضمام. تأكد من الرمز وأن المقعد الآخر متاح. "+e.message)}
+};
+async function enterRoom(id,role,invite){
+ currentRoom=id;myRole=role;show("lobby",false);show("game",true);
+ $("myRole").textContent=role==="king"?"أنت الملك":"أنت الملكة";$("roomInfo").textContent="رمز المملكة: "+invite;
+ roomRef=db.ref("rooms/"+id);
+ listen(roomRef.child("players"),"value",s=>{const p=s.val()||{};$("playersLine").textContent="الملك: "+(p.king?.name||"بانتظار الملك")+"  |  الملكة: "+(p.queen?.name||"بانتظار الملكة")});
+ listen(roomRef.child("story"),"value",s=>{$("storyText").textContent=s.val()?.text||"لم يُكتب قرار بعد."});
+ listen(roomRef.child("chat").limitToLast(60),"value",s=>{const box=$("messages");box.innerHTML="";s.forEach(x=>{const m=x.val(),d=document.createElement("div");d.className="msg"+(m.uid===auth.currentUser.uid?" mine":"");const sm=document.createElement("small");sm.textContent=(m.name||"لاعب")+" • "+new Date(m.at||Date.now()).toLocaleString("ar-EG");const t=document.createElement("div");t.textContent=m.text||"";d.append(sm,t);box.append(d)});box.scrollTop=box.scrollHeight});
+ listen(roomRef.child("events").limitToLast(20),"value",s=>{const box=$("events");box.innerHTML="";s.forEach(x=>{const d=document.createElement("div");d.className="event";d.textContent=x.val().text;box.append(d)})});
+ const note=db.ref("privateNotes/"+id+"/"+auth.currentUser.uid);
+ listen(note,"value",s=>{$("privateText").value=s.val()?.text||""});
+ $("copyCode").onclick=async()=>{try{await navigator.clipboard.writeText(invite);status("globalStatus","تم نسخ رمز الدعوة");show("globalStatus",true)}catch(e){prompt("انسخ رمز الدعوة:",invite)}};
+}
+$("sendBtn").onclick=async()=>{const text=$("messageInput").value.trim();if(!text||!currentRoom)return;try{await db.ref("rooms/"+currentRoom+"/chat").push({uid:auth.currentUser.uid,name:myRole==="king"?"الملك":"الملكة",text,at:firebase.database.ServerValue.TIMESTAMP});$("messageInput").value=""}catch(e){alert("تعذر إرسال الرسالة: "+e.message)}};
+$("messageInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("sendBtn").click()});
+$("saveDecision").onclick=async()=>{const text=$("decision").value.trim();if(!text||!currentRoom)return;try{await db.ref("rooms/"+currentRoom+"/story").set({text,updatedAt:firebase.database.ServerValue.TIMESTAMP});await db.ref("rooms/"+currentRoom+"/events").push({by:auth.currentUser.uid,text:(myRole==="king"?"الملك":"الملكة")+" اقترح: "+text,at:firebase.database.ServerValue.TIMESTAMP});$("decision").value=""}catch(e){alert("تعذر حفظ القرار: "+e.message)}};
+$("savePrivate").onclick=async()=>{if(!currentRoom)return;try{await db.ref("privateNotes/"+currentRoom+"/"+auth.currentUser.uid).set({text:$("privateText").value,updatedAt:firebase.database.ServerValue.TIMESTAMP});status("privateStatus"," • تم الحفظ")}catch(e){status("privateStatus"," • تعذر الحفظ: "+e.message,true)}};
+</script></body></html>

@@ -101,12 +101,12 @@ label{display:block;margin-top:10px;opacity:.85;font-size:16px}
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
 /* ============ 1. CONFIG ============ */
-const FIREBASE_CONFIG={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",databaseURL:"https://YOUR_PROJECT-default-rtdb.firebaseio.com",projectId:"YOUR_PROJECT",appId:"YOUR_APP_ID"};
-const OK=!FIREBASE_CONFIG.apiKey.startsWith("YOUR_");
-let auth,db;if(OK){firebase.initializeApp(FIREBASE_CONFIG);auth=firebase.auth();db=firebase.database()}
-const $=i=>document.getElementById(i),SV=()=>firebase.database.ServerValue.TIMESTAMP;
-const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
-
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAh32NGbiZVZbY-WE_Lf5ef6X8wLkw3xn0",
+  authDomain: "mamlakat-alabad.firebaseapp.com",
+  databaseURL: "https://mamlakat-alabad-default-rtdb.firebaseio.com",
+  projectId: "mamlakat-alabad",
+  appId: "1:1041905354485:web:d525ce1a5734de3afbe7bc"
 /* ============ 2. TEXT (AR / EN) ============ */
 let L=localStorage.lang||'ar',QL=+(localStorage.ql||1),SND=localStorage.snd!=='0';
 const T={ar:{title:'مملكة الأبد',sub:'قلبان، مملكة واحدة، وحكاية لا تنتهي.',start:'ابدأ رحلتك',cont:'تابع الرحلة',set:'الإعدادات',how:'طريقة اللعب',
